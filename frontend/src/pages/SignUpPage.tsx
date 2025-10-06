@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
-import { Mail, Lock, Upload, Eye, EyeOff, Loader2, User } from 'lucide-react';
+import { Mail, Lock, Upload, Eye, EyeOff, Loader2, User, Moon, Sun } from 'lucide-react';
 import toast, { Toaster } from 'react-hot-toast';
-import AuthToaster from '../components/AuthToaster';
+import useTheme from '../hooks/useTheme';
+import ToggleThemeButton from '../components/ThemeToggleButton';
+import Logo from '../components/Logo';
 import { useNavigate } from 'react-router-dom';
-
 const SignUpPage: React.FC = () => {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
@@ -13,7 +14,8 @@ const SignUpPage: React.FC = () => {
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [agreedToTerms, setAgreedToTerms] = useState(false);
-    const navigate = useNavigate()
+  const { isDarkMode, toggleTheme } = useTheme();
+  const navigate = useNavigate()
   const handleSignUp = () => {
     if (!name || !email || !password || !confirmPassword) {
       toast.error('Please fill in all fields');
@@ -60,31 +62,66 @@ const SignUpPage: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen w-full flex items-center justify-center p-4 bg-gray-50">
-      <AuthToaster/>
+    <div className={`min-h-screen w-full flex items-center justify-center p-4 transition-colors duration-200 ${
+      isDarkMode ? 'bg-neutral-950' : 'bg-gray-50'
+    }`}>
+      <Toaster 
+        position="top-center"
+        toastOptions={{
+          duration: 3000,
+          style: {
+            background: isDarkMode ? '#171717' : '#000',
+            color: '#fff',
+            border: isDarkMode ? '1px solid #262626' : '1px solid #333',
+            borderRadius: '8px',
+            padding: '12px 16px',
+            fontSize: '14px',
+          },
+          success: {
+            iconTheme: {
+              primary: isDarkMode ? '#fff' : '#000',
+              secondary: isDarkMode ? '#000' : '#fff',
+            },
+          },
+          error: {
+            iconTheme: {
+              primary: isDarkMode ? '#fff' : '#000',
+              secondary: isDarkMode ? '#000' : '#fff',
+            },
+          },
+        }}
+      />
+
+      {/* Theme Toggle Button */}
+      <ToggleThemeButton isDarkMode={isDarkMode} toggleTheme={toggleTheme} />
 
       <div className="w-full max-w-sm">
         {/* Logo */}
-        <div className="flex justify-center mb-8">
-          <div className="flex items-center gap-2">
-            <div className="bg-black p-2 rounded-md">
-              <Upload className="w-5 h-5 text-white" />
-            </div>
-            <span className="text-xl font-semibold text-gray-900">FileUploader</span>
-          </div>
-        </div>
+        <Logo isDarkMode={isDarkMode}/>
 
         {/* Header */}
         <div className="text-center mb-10">
-          <h1 className="text-2xl font-semibold text-gray-900 mb-2">Create your account</h1>
-          <p className="text-sm text-gray-500">Get started with FileUploader</p>
+          <h1 className={`text-2xl font-semibold mb-2 ${
+            isDarkMode ? 'text-white' : 'text-gray-900'
+          }`}>
+            Create your account
+          </h1>
+          <p className={`text-sm ${
+            isDarkMode ? 'text-gray-400' : 'text-gray-500'
+          }`}>
+            Get started with FileUploader
+          </p>
         </div>
 
         {/* Form */}
         <div className="space-y-4">
           {/* Name Input */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Full Name</label>
+            <label className={`block text-sm font-medium mb-2 ${
+              isDarkMode ? 'text-gray-300' : 'text-gray-700'
+            }`}>
+              Full Name
+            </label>
             <div className="relative">
               <input
                 type="text"
@@ -93,14 +130,22 @@ const SignUpPage: React.FC = () => {
                 onChange={(e) => setName(e.target.value)}
                 onKeyPress={handleKeyPress}
                 disabled={isLoading}
-                className="w-full bg-white text-gray-900 placeholder-gray-400 rounded-md py-2.5 px-3 border border-gray-200 focus:outline-none focus:border-gray-400 focus:ring-1 focus:ring-gray-400 transition-all disabled:opacity-50 disabled:cursor-not-allowed text-sm"
+                className={`w-full rounded-md py-2.5 px-3 text-sm transition-colors ${
+                  isDarkMode
+                    ? 'bg-neutral-900 text-white placeholder-gray-500 border-neutral-700 focus:border-neutral-500 focus:ring-neutral-500'
+                    : 'bg-white text-gray-900 placeholder-gray-400 border-gray-200 focus:border-gray-400 focus:ring-gray-400'
+                } border focus:outline-none focus:ring-1 disabled:opacity-50 disabled:cursor-not-allowed`}
               />
             </div>
           </div>
 
           {/* Email Input */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Email</label>
+            <label className={`block text-sm font-medium mb-2 ${
+              isDarkMode ? 'text-gray-300' : 'text-gray-700'
+            }`}>
+              Email
+            </label>
             <div className="relative">
               <input
                 type="email"
@@ -109,14 +154,22 @@ const SignUpPage: React.FC = () => {
                 onChange={(e) => setEmail(e.target.value)}
                 onKeyPress={handleKeyPress}
                 disabled={isLoading}
-                className="w-full bg-white text-gray-900 placeholder-gray-400 rounded-md py-2.5 px-3 border border-gray-200 focus:outline-none focus:border-gray-400 focus:ring-1 focus:ring-gray-400 transition-all disabled:opacity-50 disabled:cursor-not-allowed text-sm"
+                className={`w-full rounded-md py-2.5 px-3 text-sm transition-colors ${
+                  isDarkMode
+                    ? 'bg-neutral-900 text-white placeholder-gray-500 border-neutral-700 focus:border-neutral-500 focus:ring-neutral-500'
+                    : 'bg-white text-gray-900 placeholder-gray-400 border-gray-200 focus:border-gray-400 focus:ring-gray-400'
+                } border focus:outline-none focus:ring-1 disabled:opacity-50 disabled:cursor-not-allowed`}
               />
             </div>
           </div>
 
           {/* Password Input */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Password</label>
+            <label className={`block text-sm font-medium mb-2 ${
+              isDarkMode ? 'text-gray-300' : 'text-gray-700'
+            }`}>
+              Password
+            </label>
             <div className="relative">
               <input
                 type={showPassword ? 'text' : 'password'}
@@ -125,12 +178,20 @@ const SignUpPage: React.FC = () => {
                 onChange={(e) => setPassword(e.target.value)}
                 onKeyPress={handleKeyPress}
                 disabled={isLoading}
-                className="w-full bg-white text-gray-900 placeholder-gray-400 rounded-md py-2.5 px-3 pr-11 border border-gray-200 focus:outline-none focus:border-gray-400 focus:ring-1 focus:ring-gray-400 transition-all disabled:opacity-50 disabled:cursor-not-allowed text-sm"
+                className={`w-full rounded-md py-2.5 px-3 pr-11 text-sm transition-colors ${
+                  isDarkMode
+                    ? 'bg-neutral-900 text-white placeholder-gray-500 border-neutral-700 focus:border-neutral-500 focus:ring-neutral-500'
+                    : 'bg-white text-gray-900 placeholder-gray-400 border-gray-200 focus:border-gray-400 focus:ring-gray-400'
+                } border focus:outline-none focus:ring-1 disabled:opacity-50 disabled:cursor-not-allowed`}
               />
               <button
                 type="button"
                 onClick={() => setShowPassword(!showPassword)}
-                className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-700 transition-colors"
+                className={`absolute right-3 top-1/2 transform -translate-y-1/2 transition-colors ${
+                  isDarkMode
+                    ? 'text-gray-400 hover:text-gray-200'
+                    : 'text-gray-500 hover:text-gray-700'
+                }`}
                 disabled={isLoading}
               >
                 {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
@@ -140,7 +201,11 @@ const SignUpPage: React.FC = () => {
 
           {/* Confirm Password Input */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Confirm Password</label>
+            <label className={`block text-sm font-medium mb-2 ${
+              isDarkMode ? 'text-gray-300' : 'text-gray-700'
+            }`}>
+              Confirm Password
+            </label>
             <div className="relative">
               <input
                 type={showConfirmPassword ? 'text' : 'password'}
@@ -149,12 +214,20 @@ const SignUpPage: React.FC = () => {
                 onChange={(e) => setConfirmPassword(e.target.value)}
                 onKeyPress={handleKeyPress}
                 disabled={isLoading}
-                className="w-full bg-white text-gray-900 placeholder-gray-400 rounded-md py-2.5 px-3 pr-11 border border-gray-200 focus:outline-none focus:border-gray-400 focus:ring-1 focus:ring-gray-400 transition-all disabled:opacity-50 disabled:cursor-not-allowed text-sm"
+                className={`w-full rounded-md py-2.5 px-3 pr-11 text-sm transition-colors ${
+                  isDarkMode
+                    ? 'bg-neutral-900 text-white placeholder-gray-500 border-neutral-700 focus:border-neutral-500 focus:ring-neutral-500'
+                    : 'bg-white text-gray-900 placeholder-gray-400 border-gray-200 focus:border-gray-400 focus:ring-gray-400'
+                } border focus:outline-none focus:ring-1 disabled:opacity-50 disabled:cursor-not-allowed`}
               />
               <button
                 type="button"
                 onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-700 transition-colors"
+                className={`absolute right-3 top-1/2 transform -translate-y-1/2 transition-colors ${
+                  isDarkMode
+                    ? 'text-gray-400 hover:text-gray-200'
+                    : 'text-gray-500 hover:text-gray-700'
+                }`}
                 disabled={isLoading}
               >
                 {showConfirmPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
@@ -170,15 +243,25 @@ const SignUpPage: React.FC = () => {
               checked={agreedToTerms}
               onChange={(e) => setAgreedToTerms(e.target.checked)}
               disabled={isLoading}
-              className="mt-0.5 h-4 w-4 rounded border-gray-300 text-black focus:ring-gray-400 focus:ring-offset-0 disabled:opacity-50"
+              className={`mt-0.5 h-4 w-4 rounded focus:ring-offset-0 disabled:opacity-50 ${
+                isDarkMode
+                  ? 'border-neutral-700 bg-neutral-900 text-white focus:ring-neutral-500'
+                  : 'border-gray-300 text-black focus:ring-gray-400'
+              }`}
             />
-            <label htmlFor="terms" className="text-sm text-gray-600">
+            <label htmlFor="terms" className={`text-sm ${
+              isDarkMode ? 'text-gray-400' : 'text-gray-600'
+            }`}>
               I agree to the{' '}
-              <button className="text-gray-900 hover:underline font-medium">
+              <button className={`font-medium hover:underline ${
+                isDarkMode ? 'text-white' : 'text-gray-900'
+              }`}>
                 Terms of Service
               </button>{' '}
               and{' '}
-              <button className="text-gray-900 hover:underline font-medium">
+              <button className={`font-medium hover:underline ${
+                isDarkMode ? 'text-white' : 'text-gray-900'
+              }`}>
                 Privacy Policy
               </button>
             </label>
@@ -189,7 +272,11 @@ const SignUpPage: React.FC = () => {
             type="button"
             onClick={handleSignUp}
             disabled={isLoading}
-            className="w-full bg-black text-white font-medium py-2.5 rounded-md hover:bg-gray-900 transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 text-sm shadow-sm"
+            className={`w-full font-medium py-2.5 rounded-md transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 text-sm shadow-sm ${
+              isDarkMode
+                ? 'bg-white text-black hover:bg-gray-200'
+                : 'bg-black text-white hover:bg-gray-900'
+            }`}
           >
             {isLoading ? (
               <>
@@ -204,10 +291,18 @@ const SignUpPage: React.FC = () => {
           {/* Divider */}
           <div className="relative my-6">
             <div className="absolute inset-0 flex items-center">
-              <div className="w-full border-t border-gray-200"></div>
+              <div className={`w-full border-t ${
+                isDarkMode ? 'border-neutral-800' : 'border-gray-200'
+              }`}></div>
             </div>
             <div className="relative flex justify-center text-xs">
-              <span className="px-3 bg-gray-50 text-gray-500 uppercase">or continue with</span>
+              <span className={`px-3 uppercase ${
+                isDarkMode 
+                  ? 'bg-neutral-950 text-gray-500' 
+                  : 'bg-gray-50 text-gray-500'
+              }`}>
+                or continue with
+              </span>
             </div>
           </div>
 
@@ -215,7 +310,11 @@ const SignUpPage: React.FC = () => {
           <button
             onClick={handleGoogleSignUp}
             disabled={isLoading}
-            className="w-full bg-white text-gray-700 font-medium py-2.5 rounded-md border border-gray-200 hover:bg-gray-50 hover:border-gray-300 transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-3 text-sm shadow-sm"
+            className={`w-full font-medium py-2.5 rounded-md border transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-3 text-sm shadow-sm ${
+              isDarkMode
+                ? 'bg-neutral-900 text-gray-300 border-neutral-700 hover:bg-neutral-800 hover:border-neutral-600'
+                : 'bg-white text-gray-700 border-gray-200 hover:bg-gray-50 hover:border-gray-300'
+            }`}
           >
             <svg className="w-5 h-5" viewBox="0 0 24 24">
               <path
@@ -239,9 +338,17 @@ const SignUpPage: React.FC = () => {
           </button>
 
           {/* Sign In Link */}
-          <p className="text-center text-sm text-gray-500 mt-8">
+          <p className={`text-center text-sm mt-8 ${
+            isDarkMode ? 'text-gray-400' : 'text-gray-500'
+          }`}>
             Already have an account?{' '}
-            <button onClick={() => navigate('/')} className="text-gray-900 font-medium hover:underline" disabled={isLoading}>
+            <button 
+              className={`font-medium hover:underline ${
+                isDarkMode ? 'text-white' : 'text-gray-900'
+              }`}
+              disabled={isLoading}
+              onClick={() => navigate('/')}
+            >
               Sign in
             </button>
           </p>
