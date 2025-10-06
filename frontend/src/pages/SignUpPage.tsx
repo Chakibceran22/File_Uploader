@@ -5,6 +5,8 @@ import useTheme from '../hooks/useTheme';
 import ToggleThemeButton from '../components/ThemeToggleButton';
 import Logo from '../components/Logo';
 import { useNavigate } from 'react-router-dom';
+import type { SignUpDTO } from '../types/SignUpDTO';
+import { authService } from '../utils/authServiceSigneTon';
 const SignUpPage: React.FC = () => {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
@@ -16,7 +18,7 @@ const SignUpPage: React.FC = () => {
   const [agreedToTerms, setAgreedToTerms] = useState(false);
   const { isDarkMode, toggleTheme } = useTheme();
   const navigate = useNavigate()
-  const handleSignUp = () => {
+  const handleSignUp = async() => {
     if (!name || !email || !password || !confirmPassword) {
       toast.error('Please fill in all fields');
       return;
@@ -36,14 +38,24 @@ const SignUpPage: React.FC = () => {
       toast.error('Please agree to the terms and conditions');
       return;
     }
+    const userInput : SignUpDTO = {
+      email,
+      password,
+      username: name
+    }
 
     setIsLoading(true);
     
-    setTimeout(() => {
-      setIsLoading(false);
-      toast.success('Account created successfully!');
-      // Here you would typically redirect or handle registration
-    }, 2000);
+    try {
+      const response = await authService.signUp(userInput)
+      toast.success("Signed Up Successfully, Check your email For confirmation")
+      
+    } catch (error: any) {
+      console.error(error.message)
+      toast.error(error.message)
+    }finally{
+      setIsLoading(false)
+    }
   };
 
   const handleGoogleSignUp = () => {

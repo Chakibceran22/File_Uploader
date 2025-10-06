@@ -4,6 +4,7 @@ import toast, { Toaster } from 'react-hot-toast';
 import useTheme from '../hooks/useTheme';
 import ToggleThemeButton from '../components/ThemeToggleButton';
 import Logo from '../components/Logo';
+import AuthToaster from '../components/AuthToaster';
 const EmailVerificationPage: React.FC = () => {
   const [isVerifying, setIsVerifying] = useState(true);
   const [isVerified, setIsVerified] = useState(false);
@@ -39,32 +40,7 @@ const EmailVerificationPage: React.FC = () => {
     <div className={`min-h-screen w-full flex items-center justify-center p-4 transition-colors duration-200 ${
       isDarkMode ? 'bg-neutral-950' : 'bg-gray-50'
     }`}>
-      <Toaster 
-        position="top-center"
-        toastOptions={{
-          duration: 3000,
-          style: {
-            background: isDarkMode ? '#171717' : '#000',
-            color: '#fff',
-            border: isDarkMode ? '1px solid #262626' : '1px solid #333',
-            borderRadius: '8px',
-            padding: '12px 16px',
-            fontSize: '14px',
-          },
-          success: {
-            iconTheme: {
-              primary: isDarkMode ? '#fff' : '#000',
-              secondary: isDarkMode ? '#000' : '#fff',
-            },
-          },
-          error: {
-            iconTheme: {
-              primary: isDarkMode ? '#fff' : '#000',
-              secondary: isDarkMode ? '#000' : '#fff',
-            },
-          },
-        }}
-      />
+      <AuthToaster isDarkMode={isDarkMode} />
 
       {/* Theme Toggle Button */}
       <ToggleThemeButton isDarkMode={isDarkMode} toggleTheme={toggleTheme} />

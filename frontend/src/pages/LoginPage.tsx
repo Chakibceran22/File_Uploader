@@ -1,74 +1,97 @@
-import React, { useState } from 'react';
-import { Mail, Lock, Upload, Eye, EyeOff, Loader2, Moon, Sun } from 'lucide-react';
-import toast, { Toaster } from 'react-hot-toast';
-import useTheme from '../hooks/useTheme';
-import AuthToaster from '../components/AuthToaster';
-import { useNavigate } from 'react-router-dom';
-import ToggleThemeButton from '../components/ThemeToggleButton';
-import Logo from '../components/Logo';
+import React, { useState } from "react";
+import {
+  Mail,
+  Lock,
+  Upload,
+  Eye,
+  EyeOff,
+  Loader2,
+  Moon,
+  Sun,
+} from "lucide-react";
+import toast, { Toaster } from "react-hot-toast";
+import useTheme from "../hooks/useTheme";
+import AuthToaster from "../components/AuthToaster";
+import { useNavigate } from "react-router-dom";
+import ToggleThemeButton from "../components/ThemeToggleButton";
+import Logo from "../components/Logo";
+import { AuthService } from "../lib/authService";
+import type { LoginDTO } from "../types/LoginDTO";
+import { authService } from "../utils/authServiceSigneTon";
 
 const LoginPage: React.FC = () => {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const { isDarkMode, toggleTheme} = useTheme()
-  const navigate = useNavigate()
-  const handleEmailLogin = () => {
+  const { isDarkMode, toggleTheme } = useTheme();
+  const navigate = useNavigate();
+  const handleEmailLogin = async () => {
     if (!email || !password) {
-      toast.error('Please fill in all fields');
+      toast.error("Please fill in all fields");
       return;
     }
 
     setIsLoading(true);
-    
-    setTimeout(() => {
+    const userInput: LoginDTO = {
+      email,
+      password,
+    };
+
+    try {
+      const response = await authService.login(userInput);
+      toast.success("Login Successful");
+      console.log(response);
+    } catch (error: any) {
+      toast.error(error.message);
+      console.error(error);
+    } finally {
       setIsLoading(false);
-      if (email && password.length >= 6) {
-        toast.success('Login successful!');
-      } else {
-        toast.error('Invalid credentials');
-      }
-    }, 2000);
+    }
   };
 
   const handleGoogleLogin = () => {
     setIsLoading(true);
-    
+
     setTimeout(() => {
       setIsLoading(false);
-      toast.success('Google login successful!');
+      toast.success("Google login successful!");
     }, 1500);
   };
 
   const handleKeyPress = (e: React.KeyboardEvent) => {
-    if (e.key === 'Enter' && !isLoading) {
+    if (e.key === "Enter" && !isLoading) {
       handleEmailLogin();
     }
   };
 
   return (
-    <div className={`min-h-screen w-full flex items-center justify-center p-4 transition-colors duration-200 ${
-      isDarkMode ? 'bg-neutral-950' : 'bg-gray-50'
-    }`}>
-      
-    <AuthToaster isDarkMode={isDarkMode}/>
+    <div
+      className={`min-h-screen w-full flex items-center justify-center p-4 transition-colors duration-200 ${
+        isDarkMode ? "bg-neutral-950" : "bg-gray-50"
+      }`}
+    >
+      <AuthToaster isDarkMode={isDarkMode} />
       {/* Theme Toggle Button */}
-      <ToggleThemeButton isDarkMode={isDarkMode} toggleTheme={toggleTheme}/>
+      <ToggleThemeButton isDarkMode={isDarkMode} toggleTheme={toggleTheme} />
       <div className="w-full max-w-sm">
         {/* Logo */}
-        <Logo isDarkMode={isDarkMode}/>
+        <Logo isDarkMode={isDarkMode} />
 
         {/* Header */}
         <div className="text-center mb-10">
-          <h1 className={`text-2xl font-semibold mb-2 ${
-            isDarkMode ? 'text-white' : 'text-gray-900'
-          }`}>
+          <h1
+            className={`text-2xl font-semibold mb-2 ${
+              isDarkMode ? "text-white" : "text-gray-900"
+            }`}
+          >
             Sign in to your account
           </h1>
-          <p className={`text-sm ${
-            isDarkMode ? 'text-gray-400' : 'text-gray-500'
-          }`}>
+          <p
+            className={`text-sm ${
+              isDarkMode ? "text-gray-400" : "text-gray-500"
+            }`}
+          >
             Welcome back
           </p>
         </div>
@@ -77,9 +100,11 @@ const LoginPage: React.FC = () => {
         <div className="space-y-4">
           {/* Email Input */}
           <div>
-            <label className={`block text-sm font-medium mb-2 ${
-              isDarkMode ? 'text-gray-300' : 'text-gray-700'
-            }`}>
+            <label
+              className={`block text-sm font-medium mb-2 ${
+                isDarkMode ? "text-gray-300" : "text-gray-700"
+              }`}
+            >
               Email
             </label>
             <div className="relative">
@@ -92,8 +117,8 @@ const LoginPage: React.FC = () => {
                 disabled={isLoading}
                 className={`w-full rounded-md py-2.5 px-3 text-sm transition-colors ${
                   isDarkMode
-                    ? 'bg-neutral-900 text-white placeholder-gray-500 border-neutral-700 focus:border-neutral-500 focus:ring-neutral-500'
-                    : 'bg-white text-gray-900 placeholder-gray-400 border-gray-200 focus:border-gray-400 focus:ring-gray-400'
+                    ? "bg-neutral-900 text-white placeholder-gray-500 border-neutral-700 focus:border-neutral-500 focus:ring-neutral-500"
+                    : "bg-white text-gray-900 placeholder-gray-400 border-gray-200 focus:border-gray-400 focus:ring-gray-400"
                 } border focus:outline-none focus:ring-1 disabled:opacity-50 disabled:cursor-not-allowed`}
               />
             </div>
@@ -101,14 +126,16 @@ const LoginPage: React.FC = () => {
 
           {/* Password Input */}
           <div>
-            <label className={`block text-sm font-medium mb-2 ${
-              isDarkMode ? 'text-gray-300' : 'text-gray-700'
-            }`}>
+            <label
+              className={`block text-sm font-medium mb-2 ${
+                isDarkMode ? "text-gray-300" : "text-gray-700"
+              }`}
+            >
               Password
             </label>
             <div className="relative">
               <input
-                type={showPassword ? 'text' : 'password'}
+                type={showPassword ? "text" : "password"}
                 placeholder="Enter your password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
@@ -116,8 +143,8 @@ const LoginPage: React.FC = () => {
                 disabled={isLoading}
                 className={`w-full rounded-md py-2.5 px-3 pr-11 text-sm transition-colors ${
                   isDarkMode
-                    ? 'bg-neutral-900 text-white placeholder-gray-500 border-neutral-700 focus:border-neutral-500 focus:ring-neutral-500'
-                    : 'bg-white text-gray-900 placeholder-gray-400 border-gray-200 focus:border-gray-400 focus:ring-gray-400'
+                    ? "bg-neutral-900 text-white placeholder-gray-500 border-neutral-700 focus:border-neutral-500 focus:ring-neutral-500"
+                    : "bg-white text-gray-900 placeholder-gray-400 border-gray-200 focus:border-gray-400 focus:ring-gray-400"
                 } border focus:outline-none focus:ring-1 disabled:opacity-50 disabled:cursor-not-allowed`}
               />
               <button
@@ -125,12 +152,16 @@ const LoginPage: React.FC = () => {
                 onClick={() => setShowPassword(!showPassword)}
                 className={`absolute right-3 top-1/2 transform -translate-y-1/2 transition-colors ${
                   isDarkMode
-                    ? 'text-gray-400 hover:text-gray-200'
-                    : 'text-gray-500 hover:text-gray-700'
+                    ? "text-gray-400 hover:text-gray-200"
+                    : "text-gray-500 hover:text-gray-700"
                 }`}
                 disabled={isLoading}
               >
-                {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                {showPassword ? (
+                  <EyeOff className="w-4 h-4" />
+                ) : (
+                  <Eye className="w-4 h-4" />
+                )}
               </button>
             </div>
           </div>
@@ -141,11 +172,11 @@ const LoginPage: React.FC = () => {
               type="button"
               className={`text-sm transition-colors ${
                 isDarkMode
-                  ? 'text-gray-400 hover:text-white'
-                  : 'text-gray-500 hover:text-gray-900'
+                  ? "text-gray-400 hover:text-white"
+                  : "text-gray-500 hover:text-gray-900"
               }`}
               disabled={isLoading}
-              onClick={() => navigate('/forgot-password')}
+              onClick={() => navigate("/forgot-password")}
             >
               Forgot password?
             </button>
@@ -158,8 +189,8 @@ const LoginPage: React.FC = () => {
             disabled={isLoading}
             className={`w-full font-medium py-2.5 rounded-md transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 text-sm shadow-sm ${
               isDarkMode
-                ? 'bg-white text-black hover:bg-gray-200'
-                : 'bg-black text-white hover:bg-gray-900'
+                ? "bg-white text-black hover:bg-gray-200"
+                : "bg-black text-white hover:bg-gray-900"
             }`}
           >
             {isLoading ? (
@@ -168,23 +199,27 @@ const LoginPage: React.FC = () => {
                 Signing in...
               </>
             ) : (
-              'Sign in'
+              "Sign in"
             )}
           </button>
 
           {/* Divider */}
           <div className="relative my-6">
             <div className="absolute inset-0 flex items-center">
-              <div className={`w-full border-t ${
-                isDarkMode ? 'border-neutral-800' : 'border-gray-200'
-              }`}></div>
+              <div
+                className={`w-full border-t ${
+                  isDarkMode ? "border-neutral-800" : "border-gray-200"
+                }`}
+              ></div>
             </div>
             <div className="relative flex justify-center text-xs">
-              <span className={`px-3 uppercase ${
-                isDarkMode 
-                  ? 'bg-neutral-950 text-gray-500' 
-                  : 'bg-gray-50 text-gray-500'
-              }`}>
+              <span
+                className={`px-3 uppercase ${
+                  isDarkMode
+                    ? "bg-neutral-950 text-gray-500"
+                    : "bg-gray-50 text-gray-500"
+                }`}
+              >
                 or continue with
               </span>
             </div>
@@ -196,8 +231,8 @@ const LoginPage: React.FC = () => {
             disabled={isLoading}
             className={`w-full font-medium py-2.5 rounded-md border transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-3 text-sm shadow-sm ${
               isDarkMode
-                ? 'bg-neutral-900 text-gray-300 border-neutral-700 hover:bg-neutral-800 hover:border-neutral-600'
-                : 'bg-white text-gray-700 border-gray-200 hover:bg-gray-50 hover:border-gray-300'
+                ? "bg-neutral-900 text-gray-300 border-neutral-700 hover:bg-neutral-800 hover:border-neutral-600"
+                : "bg-white text-gray-700 border-gray-200 hover:bg-gray-50 hover:border-gray-300"
             }`}
           >
             <svg className="w-5 h-5" viewBox="0 0 24 24">
@@ -222,18 +257,38 @@ const LoginPage: React.FC = () => {
           </button>
 
           {/* Sign Up Link */}
-          <p className={`text-center text-sm mt-8 ${
-            isDarkMode ? 'text-gray-400' : 'text-gray-500'
-          }`}>
-            Don't have an account?{' '}
-            <button 
+          <p
+            className={`text-center text-sm mt-8 ${
+              isDarkMode ? "text-gray-400" : "text-gray-500"
+            }`}
+          >
+            Don't have an account?{" "}
+            <button
               className={`font-medium hover:underline ${
-                isDarkMode ? 'text-white' : 'text-gray-900'
+                isDarkMode ? "text-white" : "text-gray-900"
               }`}
               disabled={isLoading}
-              onClick={() => navigate('/signup')}
+              onClick={() => navigate("/signup")}
             >
               Sign up
+            </button>
+          </p>
+          {/* Resend Confirmation Link */}
+          <p
+            className={`text-center text-xs mt-3 ${
+              isDarkMode ? "text-gray-500" : "text-gray-400"
+            }`}
+          >
+            Didn't receive confirmation email?{" "}
+            <button
+              className={`font-medium hover:underline ${
+                isDarkMode
+                  ? "text-gray-400 hover:text-white"
+                  : "text-gray-600 hover:text-gray-900"
+              }`}
+              onClick={() => navigate("/resend-confirmation")}
+            >
+              Resend
             </button>
           </p>
         </div>
