@@ -1,8 +1,6 @@
-import { ConflictException, Injectable, UnauthorizedException } from '@nestjs/common';
+import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { SupabaseClient } from '@supabase/supabase-js';
-import { IsEmail } from 'class-validator';
-import { retry } from 'rxjs';
+
 import { SignInDto } from 'src/dto/sign-in-dto/sign-in-dto.dto';
 import { SignUpDto } from 'src/dto/sign-up-dto/sign-up-dto.dto';
 import { SupabaseService } from 'src/supabase/supabase.service';
@@ -43,6 +41,9 @@ export class AuthService {
             emailRedirectTo: this.configService.get('AUTH_CALLBACK_URL')
         }
     })
+    if(error){
+      throw new UnauthorizedException(error.message)
+    }
 
   }
 
