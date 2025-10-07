@@ -40,8 +40,6 @@ const ResetPasswordPage: React.FC = () => {
   const handleResetPassword = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    
-
     if (password !== confirmPassword) {
       toast.error("Passwords do not match");
       return;
@@ -50,20 +48,25 @@ const ResetPasswordPage: React.FC = () => {
     setIsLoading(true);
 
     try {
-      // Send to your NestJS backend which will call Supabase
-      console.log({
-        password,
+      const response = await authService.resetPassword(
         accessToken,
-        refreshToken
-      })
-
-      setIsSuccess(true);
-      toast.success("Password reset successfully!");
+        refreshToken,
+        password
+      );
+      if (response) {
+        console.log(response);
+        setIsSuccess(true);
+        toast.success(response.data.message);
+        setTimeout(() => {
+          navigate("/");
+        }, 2000);
+        return
+      }
+      setIsSuccess(false);
+      toast.error("Unkown Issue");
 
       // Redirect to login after 2 seconds
-    //   setTimeout(() => {
-    //     navigate("/");
-    //   }, 2000);
+        
     } catch (error: any) {
       toast.error(error.message || "Failed to reset password");
     } finally {
@@ -88,12 +91,15 @@ const ResetPasswordPage: React.FC = () => {
 
         {/* Card */}
         <div
-          className={isSuccess ? `rounded-lg border shadow-sm p-8 ${
-            isDarkMode
-              ? "bg-neutral-900 border-neutral-800"
-              : "bg-white border-gray-200"
-          }`: 'p-8' }
-          
+          className={
+            isSuccess
+              ? `rounded-lg border shadow-sm p-8 ${
+                  isDarkMode
+                    ? "bg-neutral-900 border-neutral-800"
+                    : "bg-white border-gray-200"
+                }`
+              : "p-8"
+          }
         >
           {isSuccess ? (
             // Success State
@@ -241,7 +247,6 @@ const ResetPasswordPage: React.FC = () => {
                     </button>
                   </div>
                 </div>
-
 
                 {/* Submit Button */}
                 <button
