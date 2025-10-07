@@ -113,4 +113,24 @@ export class AuthService {
             }
         }
     }
+
+    async verifyToken(sessionToken: string) {
+        try {
+            const response = await axios.get('http://localhost:3000/auth/verify-token',{
+                headers: {
+                    Authorization: `Bearer ${sessionToken}`
+                }
+            })
+            if (response) {
+                return response.data
+            }
+            return null 
+        
+        } catch (error :any) {
+            if(error.response) {
+                throw new Error(error.response.data.message)
+            }
+            throw new Error("Unable To Verify Token Or Request Failed")
+        }
+    }
 }

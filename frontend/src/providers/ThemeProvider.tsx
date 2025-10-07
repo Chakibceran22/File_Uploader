@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
-import type { ThemeProviderProps } from "../types/ThemeProviderProps";
+import type { ProviderProps } from "../types/ThemeProviderProps";
 import { ThemeContext } from "../contexts/ThemeContext";
 
-function ThemeProvider({ children }: ThemeProviderProps) {
+function ThemeProvider({ children }: ProviderProps) {
   const [isDarkMode, setIsDarkMode] = useState<boolean>(() => {
     const saved = localStorage.getItem('theme')
     return saved == 'dark'

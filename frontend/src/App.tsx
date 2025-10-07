@@ -6,10 +6,13 @@ import ForgotPasswordPage from "./pages/ForgetPasswordPage";
 import ThemeProvider from "./providers/ThemeProvider";
 import ResendConfirmationPage from "./pages/ResendConfirmationPage";
 import ResetPasswordPage from "./pages/ResetPasswordFormPage";
+import { AuthProvider } from "./providers/AuthProvider";
+import FileUploadDashboard from "./pages/FileUploadDahsboardPage";
 function App() {
   return (
     <ThemeProvider>
-      <Router>
+      <AuthProvider>
+        <Router>
         <Routes>
           <Route path="/" element={<LoginPage />} />
           <Route path="/signup" element={<SignUpPage />} />
@@ -17,8 +20,10 @@ function App() {
           <Route path="/forgot-password" element={<ForgotPasswordPage />} />
           <Route path="/resend-confirmation" element={<ResendConfirmationPage/>}/>
           <Route path="/create-password" element={<ResetPasswordPage/>} />
+          <Route path="/main" element= {<FileUploadDashboard/>} />
         </Routes>
       </Router>
+      </AuthProvider>
     </ThemeProvider>
   );
 }

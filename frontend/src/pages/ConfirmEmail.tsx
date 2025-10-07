@@ -75,9 +75,7 @@ const EmailVerificationPage: React.FC = () => {
     }, 1500);
   };
 
-  const handleResendEmail = () => {
-    navigate("/resend-confirmation");
-  };
+ 
 
   return (
     <div
@@ -239,21 +237,11 @@ const EmailVerificationPage: React.FC = () => {
                   isDarkMode ? "text-gray-400" : "text-gray-500"
                 }`}
               >
-                We couldn't verify your email. The link may have expired or is
+                We couldn't verify you Identity. The link may have expired or is
                 invalid. Reason is {errorReason}
               </p>
 
-              {/* Resend Button */}
-              <button
-                onClick={handleResendEmail}
-                className={`w-full font-medium py-2.5 rounded-md transition-all text-sm shadow-sm mb-4 ${
-                  isDarkMode
-                    ? "bg-white text-black hover:bg-gray-200"
-                    : "bg-black text-white hover:bg-gray-900"
-                }`}
-              >
-                Resend verification email
-              </button>
+              
 
               {/* Back to Login */}
               <button
@@ -262,6 +250,7 @@ const EmailVerificationPage: React.FC = () => {
                     ? "bg-neutral-900 text-gray-300 border-neutral-700 hover:bg-neutral-800 hover:border-neutral-600"
                     : "bg-white text-gray-700 border-gray-200 hover:bg-gray-50 hover:border-gray-300"
                 }`}
+                onClick={() => navigate('/')}
               >
                 Back to Sign In
               </button>
