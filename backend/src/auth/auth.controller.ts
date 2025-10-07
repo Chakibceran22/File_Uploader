@@ -3,6 +3,7 @@ import { AuthService } from './auth.service';
 import { SignUpDto } from 'src/dto/sign-up-dto/sign-up-dto.dto';
 import { SignInDto } from 'src/dto/sign-in-dto/sign-in-dto.dto';
 import { ResendEmailDTO } from 'src/dto/resend-email-dto/resend-email.dto';
+import { AccessTokenDTO } from 'src/dto/access-token-dto/access-token.dto';
 
 @Controller('auth')
 export class AuthController {
@@ -26,5 +27,10 @@ export class AuthController {
     @HttpCode(HttpStatus.OK)
     async resendConfirmationLink(@Body() {email}: ResendEmailDTO){
         await this.authService.resendEmailConfirmationLink(email)
+    }
+
+    @Post('sendToken')
+    async sendToken(@Body() confirmedToken: AccessTokenDTO) {
+        return await this.authService.verifyEmailToken(confirmedToken)
     }
 }

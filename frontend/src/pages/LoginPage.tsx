@@ -39,9 +39,9 @@ const LoginPage: React.FC = () => {
     };
 
     try {
-      const response = await authService.login(userInput);
+      const session = await authService.login(userInput);
+      sessionStorage.setItem('session', session)
       toast.success("Login Successful");
-      console.log(response);
     } catch (error: any) {
       toast.error(error.message);
       console.error(error);

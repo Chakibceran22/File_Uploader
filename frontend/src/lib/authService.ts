@@ -1,6 +1,7 @@
 import axios, { AxiosError } from "axios";
 import type { LoginDTO } from "../types/LoginDTO";
 import type { SignUpDTO } from "../types/SignUpDTO";
+import type { AccessTokenDTO } from "../types/AccessTokenDTO";
 
 export class AuthService {
     async login(userInput: LoginDTO) {
@@ -10,7 +11,10 @@ export class AuthService {
                 email: userInput.email,
                 password: userInput.password
             })
-            return response
+            if(response) {
+                return response.data.session
+            }
+            return null
         } catch (error: any) {
            if( error.response) {
             throw new Error(error.response.data.message)
@@ -53,5 +57,27 @@ export class AuthService {
             }
             throw new Error("Error during Resending")
         }
+    }
+
+    async verifyEmail(emailToken: AccessTokenDTO) {
+        const {accessToken, refreshToken} = emailToken
+        try {
+            const response = await axios.post('http://localhost:3000/auth/sendToken',{
+                accessToken,
+                refreshToken
+            })
+            if(response){
+                return response.data.session
+            }
+            return null
+            
+        } catch (error: any) {
+            if(error.response) {
+                throw new Error(error.response.data.message)
+            }
+            throw new Error("Error Verifying Token")
+            
+        }
+
     }
 }
