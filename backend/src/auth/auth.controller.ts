@@ -52,4 +52,9 @@ export class AuthController {
         return {valid: true}
     }
 
+    @Get('google')
+    async googleLogin() {
+        return await this.authService.googleLogin()
+    }
+
 }

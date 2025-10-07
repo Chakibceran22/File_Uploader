@@ -58,13 +58,19 @@ const SignUpPage: React.FC = () => {
     }
   };
 
-  const handleGoogleSignUp = () => {
+  const handleGoogleSignUp = async () => {
     setIsLoading(true);
     
-    setTimeout(() => {
-      setIsLoading(false);
-      toast.success('Google sign up successful!');
-    }, 1500);
+    try {
+      const url = await authService.googleLogin()
+      window.location.href = url?.url
+      
+    } catch (error:any) {
+      console.log(error)
+      toast.error(error.message)
+    }finally{
+      setIsLoading(false)
+    }
   };
 
   const handleKeyPress = (e: React.KeyboardEvent) => {

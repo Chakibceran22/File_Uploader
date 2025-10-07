@@ -1,12 +1,30 @@
-import React, { useState } from 'react';
-import { Upload, File, Folder, Settings, LogOut, Moon, Sun, X, Check, Loader2, Cloud, Home, Clock } from 'lucide-react';
+import React, { useEffect, useState } from 'react';
+import { Upload, File, Folder, Settings, LogOut, Moon, Sun, X, Check, Loader2, Cloud, Home, Clock, Menu } from 'lucide-react';
 import toast, { Toaster } from 'react-hot-toast';
 import useTheme from '../hooks/useTheme';
+import { useAuth } from '../hooks/useAuth';
+import { useNavigate } from 'react-router-dom';
+
 const FileUploadDashboard: React.FC = () => {
   const { isDarkMode, toggleTheme } = useTheme();
   const [dragActive, setDragActive] = useState(false);
+  const [sidebarOpen, setSidebarOpen] = useState(false);
   const [files, setFiles] = useState<Array<{id: string, name: string, size: string, status: 'uploading' | 'completed' | 'failed', progress: number}>>([]);
   const [activeTab, setActiveTab] = useState('upload');
+  const {isAuthenticated, loading, logout} = useAuth()
+  const navigate = useNavigate()
+  
+
+  useEffect(() => {
+    if(loading) return
+    if(!isAuthenticated) navigate('/')
+
+  },[loading, isAuthenticated])
+
+  const handleSignOut = () => {
+    console.log("hello world ")
+    logout()
+  }
 
   const handleDrag = (e: React.DragEvent) => {
     e.preventDefault();
@@ -46,7 +64,6 @@ const FileUploadDashboard: React.FC = () => {
 
     setFiles(prev => [...prev, ...newFiles]);
 
-    // Simulate upload progress
     newFiles.forEach(file => {
       let progress = 0;
       const interval = setInterval(() => {
@@ -103,16 +120,24 @@ const FileUploadDashboard: React.FC = () => {
         }}
       />
 
+      {/* Mobile Overlay */}
+      {sidebarOpen && (
+        <div 
+          className="fixed inset-0 bg-black bg-opacity-50 z-40 lg:hidden"
+          onClick={() => setSidebarOpen(false)}
+        />
+      )}
+
       {/* Sidebar */}
-      <aside className={`w-64 border-r flex flex-col transition-colors ${
+      <aside className={`fixed lg:static inset-y-0 left-0 z-50 w-64 border-r flex flex-col transition-transform duration-300 ${
         isDarkMode 
           ? 'bg-neutral-900 border-neutral-800' 
           : 'bg-white border-gray-200'
-      }`}>
+      } ${sidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}`}>
         {/* Logo */}
-        <div className="p-6 border-b ${
+        <div className={`p-6 border-b flex items-center justify-between ${
           isDarkMode ? 'border-neutral-800' : 'border-gray-200'
-        }">
+        }`}>
           <div className="flex items-center gap-2">
             <div className={`p-2 rounded-md ${
               isDarkMode ? 'bg-white' : 'bg-black'
@@ -127,13 +152,28 @@ const FileUploadDashboard: React.FC = () => {
               FileUploader
             </span>
           </div>
+
+          {/* Close button for mobile */}
+          <button
+            onClick={() => setSidebarOpen(false)}
+            className={`lg:hidden p-1 rounded transition-colors ${
+              isDarkMode
+                ? 'hover:bg-neutral-800 text-gray-400'
+                : 'hover:bg-gray-100 text-gray-500'
+            }`}
+          >
+            <X className="w-5 h-5" />
+          </button>
         </div>
 
         {/* Navigation */}
         <nav className="flex-1 p-4">
           <div className="space-y-1">
             <button
-              onClick={() => setActiveTab('upload')}
+              onClick={() => {
+                setActiveTab('upload');
+                setSidebarOpen(false);
+              }}
               className={`w-full flex items-center gap-3 px-3 py-2 rounded-md text-sm font-medium transition-colors ${
                 activeTab === 'upload'
                   ? isDarkMode
@@ -149,7 +189,10 @@ const FileUploadDashboard: React.FC = () => {
             </button>
 
             <button
-              onClick={() => setActiveTab('files')}
+              onClick={() => {
+                setActiveTab('files');
+                setSidebarOpen(false);
+              }}
               className={`w-full flex items-center gap-3 px-3 py-2 rounded-md text-sm font-medium transition-colors ${
                 activeTab === 'files'
                   ? isDarkMode
@@ -165,7 +208,10 @@ const FileUploadDashboard: React.FC = () => {
             </button>
 
             <button
-              onClick={() => setActiveTab('recent')}
+              onClick={() => {
+                setActiveTab('recent');
+                setSidebarOpen(false);
+              }}
               className={`w-full flex items-center gap-3 px-3 py-2 rounded-md text-sm font-medium transition-colors ${
                 activeTab === 'recent'
                   ? isDarkMode
@@ -181,7 +227,10 @@ const FileUploadDashboard: React.FC = () => {
             </button>
 
             <button
-              onClick={() => setActiveTab('settings')}
+              onClick={() => {
+                setActiveTab('settings');
+                setSidebarOpen(false);
+              }}
               className={`w-full flex items-center gap-3 px-3 py-2 rounded-md text-sm font-medium transition-colors ${
                 activeTab === 'settings'
                   ? isDarkMode
@@ -215,6 +264,7 @@ const FileUploadDashboard: React.FC = () => {
           </button>
 
           <button
+            onClick={handleSignOut}
             className={`w-full flex items-center gap-3 px-3 py-2 rounded-md text-sm font-medium transition-colors ${
               isDarkMode
                 ? 'text-gray-400 hover:bg-neutral-800 hover:text-white'
@@ -228,11 +278,46 @@ const FileUploadDashboard: React.FC = () => {
       </aside>
 
       {/* Main Content */}
-      <main className="flex-1 overflow-auto">
-        <div className="max-w-5xl mx-auto p-8">
+      <main className="flex-1 overflow-auto w-full">
+        {/* Mobile Header */}
+        <div className={`lg:hidden sticky top-0 z-30 border-b px-4 py-3 flex items-center justify-between ${
+          isDarkMode 
+            ? 'bg-neutral-900 border-neutral-800' 
+            : 'bg-white border-gray-200'
+        }`}>
+          <button
+            onClick={() => setSidebarOpen(true)}
+            className={`p-2 rounded-md transition-colors ${
+              isDarkMode
+                ? 'hover:bg-neutral-800 text-white'
+                : 'hover:bg-gray-100 text-gray-900'
+            }`}
+          >
+            <Menu className="w-5 h-5" />
+          </button>
+
+          <div className="flex items-center gap-2">
+            <div className={`p-1.5 rounded-md ${
+              isDarkMode ? 'bg-white' : 'bg-black'
+            }`}>
+              <Upload className={`w-4 h-4 ${
+                isDarkMode ? 'text-black' : 'text-white'
+              }`} />
+            </div>
+            <span className={`text-base font-semibold ${
+              isDarkMode ? 'text-white' : 'text-gray-900'
+            }`}>
+              FileUploader
+            </span>
+          </div>
+
+          <div className="w-9" />
+        </div>
+
+        <div className="max-w-5xl mx-auto p-4 sm:p-6 lg:p-8">
           {/* Header */}
-          <div className="mb-8">
-            <h1 className={`text-3xl font-semibold mb-2 ${
+          <div className="mb-6 sm:mb-8">
+            <h1 className={`text-2xl sm:text-3xl font-semibold mb-2 ${
               isDarkMode ? 'text-white' : 'text-gray-900'
             }`}>
               Upload Files
@@ -250,7 +335,7 @@ const FileUploadDashboard: React.FC = () => {
             onDragLeave={handleDrag}
             onDragOver={handleDrag}
             onDrop={handleDrop}
-            className={`relative border-2 border-dashed rounded-lg p-12 text-center transition-all ${
+            className={`relative border-2 border-dashed rounded-lg p-8 sm:p-12 text-center transition-all ${
               dragActive
                 ? isDarkMode
                   ? 'border-white bg-neutral-800'
@@ -272,21 +357,21 @@ const FileUploadDashboard: React.FC = () => {
               htmlFor="file-upload"
               className="cursor-pointer flex flex-col items-center"
             >
-              <div className={`p-4 rounded-full mb-4 ${
+              <div className={`p-3 sm:p-4 rounded-full mb-3 sm:mb-4 ${
                 isDarkMode ? 'bg-neutral-800' : 'bg-gray-100'
               }`}>
-                <Cloud className={`w-12 h-12 ${
+                <Cloud className={`w-10 h-10 sm:w-12 sm:h-12 ${
                   isDarkMode ? 'text-gray-400' : 'text-gray-500'
                 }`} />
               </div>
               
-              <p className={`text-base font-medium mb-1 ${
+              <p className={`text-sm sm:text-base font-medium mb-1 ${
                 isDarkMode ? 'text-white' : 'text-gray-900'
               }`}>
                 Click to upload or drag and drop
               </p>
               
-              <p className={`text-sm ${
+              <p className={`text-xs sm:text-sm ${
                 isDarkMode ? 'text-gray-400' : 'text-gray-500'
               }`}>
                 Upload files up to 100MB
@@ -294,7 +379,7 @@ const FileUploadDashboard: React.FC = () => {
               
               <button
                 type="button"
-                className={`mt-6 px-6 py-2.5 rounded-md font-medium text-sm transition-all ${
+                className={`mt-4 sm:mt-6 px-5 sm:px-6 py-2 sm:py-2.5 rounded-md font-medium text-sm transition-all ${
                   isDarkMode
                     ? 'bg-white text-black hover:bg-gray-200'
                     : 'bg-black text-white hover:bg-gray-900'
@@ -307,30 +392,30 @@ const FileUploadDashboard: React.FC = () => {
 
           {/* Files List */}
           {files.length > 0 && (
-            <div className="mt-8">
-              <h2 className={`text-lg font-semibold mb-4 ${
+            <div className="mt-6 sm:mt-8">
+              <h2 className={`text-base sm:text-lg font-semibold mb-3 sm:mb-4 ${
                 isDarkMode ? 'text-white' : 'text-gray-900'
               }`}>
                 Uploading Files
               </h2>
               
-              <div className="space-y-3">
+              <div className="space-y-2 sm:space-y-3">
                 {files.map(file => (
                   <div
                     key={file.id}
-                    className={`p-4 rounded-lg border transition-colors ${
+                    className={`p-3 sm:p-4 rounded-lg border transition-colors ${
                       isDarkMode
                         ? 'bg-neutral-900 border-neutral-800'
                         : 'bg-white border-gray-200'
                     }`}
                   >
                     <div className="flex items-center justify-between mb-2">
-                      <div className="flex items-center gap-3 flex-1 min-w-0">
-                        <File className={`w-5 h-5 flex-shrink-0 ${
+                      <div className="flex items-center gap-2 sm:gap-3 flex-1 min-w-0">
+                        <File className={`w-4 h-4 sm:w-5 sm:h-5 flex-shrink-0 ${
                           isDarkMode ? 'text-gray-400' : 'text-gray-500'
                         }`} />
                         <div className="flex-1 min-w-0">
-                          <p className={`text-sm font-medium truncate ${
+                          <p className={`text-xs sm:text-sm font-medium truncate ${
                             isDarkMode ? 'text-white' : 'text-gray-900'
                           }`}>
                             {file.name}

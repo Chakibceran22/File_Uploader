@@ -133,4 +133,18 @@ export class AuthService {
     }
 
   }
+
+  async googleLogin() {
+    const {data, error} =await this.supabaseService.client.auth.signInWithOAuth({
+      provider: 'google',
+      options :{
+        redirectTo: this.configService.get('AUTH_CALLBACK_URL')
+      }
+    })
+    if(error) {
+      throw new BadRequestException(error.message)
+    }
+
+    return {url : data.url}
+  }
 }

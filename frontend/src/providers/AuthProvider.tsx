@@ -44,8 +44,22 @@ export function AuthProvider({ children }: ProviderProps) {
     }
   };
 
+  const googleLogin = async() => {
+    try {
+      const url = await authService.googleLogin()
+      return url
+    } catch (error: any) {
+      throw new Error(error.message)
+    }
+  }
+  const logout = () => {
+    authService.logOut()
+    setIsAuthenticated(false)
+    return
+  }
+
   return (
-    <AuthContext.Provider value={{ isAuthenticated, loading, login }}>
+    <AuthContext.Provider value={{ isAuthenticated, loading, login, googleLogin, logout }}>
       {children}
     </AuthContext.Provider>
   );

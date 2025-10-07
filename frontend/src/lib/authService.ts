@@ -133,4 +133,22 @@ export class AuthService {
             throw new Error("Unable To Verify Token Or Request Failed")
         }
     }
+
+    async googleLogin() {
+        try {
+            const response = await axios.get('http://localhost:3000/auth/google')
+            if(!response) return
+            return {url : response.data.url}
+            
+        } catch (error: any) {
+            if(error.response) {
+                throw new Error(error.response.data.message)
+            }
+            throw new Error("Unknown Error")
+        }
+    }
+
+    logOut() {
+        sessionStorage.removeItem('session')
+    }
 }

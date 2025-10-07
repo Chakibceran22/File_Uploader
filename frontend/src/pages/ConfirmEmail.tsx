@@ -29,7 +29,7 @@ const EmailVerificationPage: React.FC = () => {
       const errorDescription = params.get("error_code");
       const type = params.get('type')
       setIsVerifying(true);
-      if (!accessToken || !refreshToken || !type) {
+      if (!accessToken || !refreshToken ) {
         console.log(errorCode);
         console.log(' i went here for some reason')
         setErrorReason(errorDescription || "Unkown error");
@@ -67,12 +67,7 @@ const EmailVerificationPage: React.FC = () => {
 
   const handleContinue = () => {
     setIsNavigating(true);
-
-    setTimeout(() => {
-      setIsNavigating(false);
-      toast.success("Redirecting to dashboard...");
-      // Here you would typically redirect to the main app
-    }, 1500);
+    navigate('/main')
   };
 
  
