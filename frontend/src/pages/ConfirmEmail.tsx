@@ -27,8 +27,9 @@ const EmailVerificationPage: React.FC = () => {
       const error = params.get("error");
       const errorCode = params.get("error_code");
       const errorDescription = params.get("error_code");
+      const type = params.get('type')
       setIsVerifying(true);
-      if (!accessToken || !refreshToken) {
+      if (!accessToken || !refreshToken || !type) {
         console.log(errorCode);
         console.log(' i went here for some reason')
         setErrorReason(errorDescription || "Unkown error");
@@ -37,6 +38,10 @@ const EmailVerificationPage: React.FC = () => {
         setIsVerified(false);
         return;
       }
+      if(type == 'recovery'){
+        navigate(`/create-password#access_token=${accessToken}&refresh_token=${refreshToken}`)
+      }
+      
 
       const emailToken: AccessTokenDTO = {
         accessToken,
