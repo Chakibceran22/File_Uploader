@@ -15,9 +15,7 @@ import AuthToaster from "../components/AuthToaster";
 import { useNavigate } from "react-router-dom";
 import ToggleThemeButton from "../components/ThemeToggleButton";
 import Logo from "../components/Logo";
-import { AuthService } from "../lib/authService";
 import type { LoginDTO } from "../types/LoginDTO";
-import { authService } from "../utils/authServiceSigneTon";
 import { useAuth } from "../hooks/useAuth";
 
 const LoginPage: React.FC = () => {
@@ -25,7 +23,7 @@ const LoginPage: React.FC = () => {
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const{ isAuthenticated, loading , login } = useAuth()
+  const{ isAuthenticated, loading , login, googleLogin } = useAuth()
   const { isDarkMode, toggleTheme } = useTheme();
   const navigate = useNavigate();
   const handleEmailLogin = async () => {
@@ -42,7 +40,13 @@ const LoginPage: React.FC = () => {
 
     try {
       await login(userInput)
-      toast.success("Login Successful");
+      if(isAuthenticated){
+        toast.success("Login Successful");
+        setTimeout(() => {
+          navigate('/main')
+        },2000)
+      }
+      
     } catch (error: any) {
       toast.error(error.message);
       console.error(error);
@@ -51,13 +55,19 @@ const LoginPage: React.FC = () => {
     }
   };
 
-  const handleGoogleLogin = () => {
+  const handleGoogleLogin = async() => {
     setIsLoading(true);
 
-    setTimeout(() => {
-      setIsLoading(false);
-      toast.success("Google login successful!");
-    }, 1500);
+   try {
+      const url = await googleLogin()
+      window.location.href = url?.url
+      
+   } catch (error: any) {
+    console.error(error)
+    toast.error(error.message)
+   }finally{
+    setIsLoading(false)
+   }
   };
 
   const handleKeyPress = (e: React.KeyboardEvent) => {
