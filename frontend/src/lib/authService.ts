@@ -80,4 +80,37 @@ export class AuthService {
         }
 
     }
+
+    async sendResetPasswordLink(email: string) {
+        try {
+            const response = await axios.post('http://localhost:3000/auth/send-reset-link',{
+                email
+            })
+            return response
+            
+        } catch (error:any) {
+            if(error.response) {
+                throw new Error(error.response.data.message)
+            }
+            throw new Error("Error during Resend Link")
+        }
+    }
+
+    async resetPassword (accessToken: string, refreshToken: string, password: string){
+        if(!refreshToken || !accessToken || !password) {
+            throw new Error("All Fields must be included")
+        }
+        try {
+            const response = await axios.post('http://localhost:3000/auth/reset-password',{
+                accessToken,
+                password,
+                refreshToken
+            })
+            return response
+        } catch (error: any) {
+            if(error.response){
+                throw new Error(error.message)
+            }
+        }
+    }
 }

@@ -6,6 +6,7 @@ import ToggleThemeButton from '../components/ThemeToggleButton';
 import Logo from '../components/Logo';
 import AuthToaster from '../components/AuthToaster';
 import { useNavigate } from 'react-router-dom';
+import { authService } from '../utils/authServiceSigneTon';
 
 const ForgotPasswordPage: React.FC = () => {
   const [email, setEmail] = useState('');
@@ -14,7 +15,7 @@ const ForgotPasswordPage: React.FC = () => {
   const {isDarkMode, toggleTheme} = useTheme()
   const navigate = useNavigate()
   
-  const handleSubmit = () => {
+  const handleSubmit = async() => {
     if (!email) {
       toast.error('Please enter your email address');
       return;
@@ -29,12 +30,18 @@ const ForgotPasswordPage: React.FC = () => {
 
     setIsLoading(true);
 
-    // Simulate API call
-    setTimeout(() => {
-      setIsLoading(false);
-      setEmailSent(true);
-      toast.success('Password reset email sent!');
-    }, 2000);
+    try {
+      const response = await authService.sendResetPasswordLink(email)
+      console.log(response)
+      if(response){
+        toast.success(response.data.message)
+      }
+    } catch (error: any) {
+      console.log(error)
+      toast.error(error.message)
+    }finally{
+      setIsLoading(false)
+    }
   };
 
   const handleKeyPress = (e: React.KeyboardEvent) => {

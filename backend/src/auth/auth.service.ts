@@ -1,7 +1,9 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { BadRequestException, Injectable, UnauthorizedException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import { AccessTokenDTO } from 'src/dto/access-token-dto/access-token.dto';
+import { EmailDTO } from 'src/dto/email-dto/email.dto';
+import { ResetPasswordDTO } from 'src/dto/reset-password-dto/reset-password.dto';
 
 import { SignInDto } from 'src/dto/sign-in-dto/sign-in-dto.dto';
 import { SignUpDto } from 'src/dto/sign-up-dto/sign-up-dto.dto';
@@ -57,6 +59,23 @@ export class AuthService {
     }
 
   }
+  async sendPasswordResetLink(email: string) {
+    const {data, error} = await this.supabaseService.client.auth.resetPasswordForEmail(
+      email,
+      {
+        redirectTo: this.configService.get('AUTH_CALLBACK_URL')
+      }
+    )
+    if( error) {
+      throw new UnauthorizedException(error.message)
+    }
+
+    return {
+      success: true,
+      message: 'Password reset link sent successfully'
+    }
+
+  }
 
   async resendEmailConfirmationLink( email: string) {
     const {data, error} = await this.supabaseService.client.auth.resend({
@@ -70,6 +89,28 @@ export class AuthService {
       throw new UnauthorizedException(error.message)
     }
 
+  }
+  async resetPassword(resetPassword: ResetPasswordDTO){
+    const {data:sessionData, error: sessionError} = await this.supabaseService.client.auth.setSession({
+      access_token: resetPassword.accessToken,
+      refresh_token: resetPassword.refreshToken
+
+    })
+
+    if(sessionError) {
+      throw new UnauthorizedException(sessionError.message)
+    }
+    const {data , error} = await this.supabaseService.client.auth.updateUser({
+      password: resetPassword.password
+    })
+
+    if( error){
+      throw new BadRequestException(error.message)
+    }
+    return {
+      success: true,
+      message: "Password Reset Successful"
+    }
   }
 
   async signIn(userInput: SignInDto){

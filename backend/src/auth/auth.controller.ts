@@ -2,8 +2,9 @@ import { Body, Controller, HttpCode, HttpStatus, Injectable, Post } from '@nestj
 import { AuthService } from './auth.service';
 import { SignUpDto } from 'src/dto/sign-up-dto/sign-up-dto.dto';
 import { SignInDto } from 'src/dto/sign-in-dto/sign-in-dto.dto';
-import { ResendEmailDTO } from 'src/dto/resend-email-dto/resend-email.dto';
 import { AccessTokenDTO } from 'src/dto/access-token-dto/access-token.dto';
+import { EmailDTO } from 'src/dto/email-dto/email.dto';
+import { ResetPasswordDTO } from 'src/dto/reset-password-dto/reset-password.dto';
 
 @Controller('auth')
 export class AuthController {
@@ -25,7 +26,7 @@ export class AuthController {
 
     @Post('resendlink')
     @HttpCode(HttpStatus.OK)
-    async resendConfirmationLink(@Body() {email}: ResendEmailDTO){
+    async resendConfirmationLink(@Body() {email}: EmailDTO){
         await this.authService.resendEmailConfirmationLink(email)
     }
 
@@ -33,4 +34,15 @@ export class AuthController {
     async sendToken(@Body() confirmedToken: AccessTokenDTO) {
         return await this.authService.verifyEmailToken(confirmedToken)
     }
+
+    @Post('send-reset-link')
+    async sendResetLink(@Body() {email} : EmailDTO) {
+        return await this.authService.sendPasswordResetLink(email)
+    }
+
+    @Post('reset-password')
+    async resetPassword(@Body() userInput: ResetPasswordDTO) {
+        return await this.authService.resetPassword(userInput)
+    }
+
 }
