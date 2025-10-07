@@ -8,6 +8,7 @@ import ResendConfirmationPage from "./pages/ResendConfirmationPage";
 import ResetPasswordPage from "./pages/ResetPasswordFormPage";
 import { AuthProvider } from "./providers/AuthProvider";
 import FileUploadDashboard from "./pages/FileUploadDahsboardPage";
+import MyFilesPage from "./pages/MyFilesPage";
 function App() {
   return (
     <ThemeProvider>
@@ -21,6 +22,7 @@ function App() {
           <Route path="/resend-confirmation" element={<ResendConfirmationPage/>}/>
           <Route path="/create-password" element={<ResetPasswordPage/>} />
           <Route path="/main" element= {<FileUploadDashboard/>} />
+          <Route path="/main/myfiles" element={<MyFilesPage/>} />
         </Routes>
       </Router>
       </AuthProvider>

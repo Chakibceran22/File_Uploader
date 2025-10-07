@@ -23,7 +23,7 @@ const LoginPage: React.FC = () => {
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const{ isAuthenticated, loading , login, googleLogin } = useAuth()
+  const { isAuthenticated, loading, login, googleLogin } = useAuth();
   const { isDarkMode, toggleTheme } = useTheme();
   const navigate = useNavigate();
   const handleEmailLogin = async () => {
@@ -39,14 +39,12 @@ const LoginPage: React.FC = () => {
     };
 
     try {
-      await login(userInput)
-      if(isAuthenticated){
-        toast.success("Login Successful");
-        setTimeout(() => {
-          navigate('/main')
-        },2000)
-      }
-      
+      await login(userInput);
+
+      toast.success("Login Successful");
+      setTimeout(() => {
+        navigate("/main");
+      }, 2000);
     } catch (error: any) {
       toast.error(error.message);
       console.error(error);
@@ -55,19 +53,18 @@ const LoginPage: React.FC = () => {
     }
   };
 
-  const handleGoogleLogin = async() => {
+  const handleGoogleLogin = async () => {
     setIsLoading(true);
 
-   try {
-      const url = await googleLogin()
-      window.location.href = url?.url
-      
-   } catch (error: any) {
-    console.error(error)
-    toast.error(error.message)
-   }finally{
-    setIsLoading(false)
-   }
+    try {
+      const url = await googleLogin();
+      window.location.href = url?.url;
+    } catch (error: any) {
+      console.error(error);
+      toast.error(error.message);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const handleKeyPress = (e: React.KeyboardEvent) => {
