@@ -1,10 +1,11 @@
-import { Body, Controller, HttpCode, HttpStatus, Injectable, Post } from '@nestjs/common';
+import { Body, Controller, Get, HttpCode, HttpStatus, Injectable, Post, UseGuards } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { SignUpDto } from 'src/dto/sign-up-dto/sign-up-dto.dto';
 import { SignInDto } from 'src/dto/sign-in-dto/sign-in-dto.dto';
 import { AccessTokenDTO } from 'src/dto/access-token-dto/access-token.dto';
 import { EmailDTO } from 'src/dto/email-dto/email.dto';
 import { ResetPasswordDTO } from 'src/dto/reset-password-dto/reset-password.dto';
+import { JwtAuthGuard } from 'src/guards/jwt-toekn.guard';
 
 @Controller('auth')
 export class AuthController {
@@ -43,6 +44,12 @@ export class AuthController {
     @Post('reset-password')
     async resetPassword(@Body() userInput: ResetPasswordDTO) {
         return await this.authService.resetPassword(userInput)
+    }
+
+    @Get('verify-token')
+    @UseGuards(JwtAuthGuard)
+    async veifiyToken() {
+        return {valid: true}
     }
 
 }

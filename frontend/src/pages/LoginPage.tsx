@@ -18,12 +18,14 @@ import Logo from "../components/Logo";
 import { AuthService } from "../lib/authService";
 import type { LoginDTO } from "../types/LoginDTO";
 import { authService } from "../utils/authServiceSigneTon";
+import { useAuth } from "../hooks/useAuth";
 
 const LoginPage: React.FC = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const{ isAuthenticated, loading , login } = useAuth()
   const { isDarkMode, toggleTheme } = useTheme();
   const navigate = useNavigate();
   const handleEmailLogin = async () => {
@@ -39,8 +41,7 @@ const LoginPage: React.FC = () => {
     };
 
     try {
-      const session = await authService.login(userInput);
-      sessionStorage.setItem('session', session)
+      await login(userInput)
       toast.success("Login Successful");
     } catch (error: any) {
       toast.error(error.message);

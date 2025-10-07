@@ -1,5 +1,5 @@
 import type React from "react"
 
-export type ThemeProviderProps = {
+export type ProviderProps = {
     children : React.ReactNode
 }
