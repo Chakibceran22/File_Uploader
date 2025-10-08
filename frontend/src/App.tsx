@@ -9,6 +9,7 @@ import ResetPasswordPage from "./pages/ResetPasswordFormPage";
 import { AuthProvider } from "./providers/AuthProvider";
 import FileUploadDashboard from "./pages/FileUploadDahsboardPage";
 import MyFilesPage from "./pages/MyFilesPage";
+import SettingsPage from "./pages/SettingsPage";
 function App() {
   return (
     <ThemeProvider>
@@ -23,6 +24,7 @@ function App() {
           <Route path="/create-password" element={<ResetPasswordPage/>} />
           <Route path="/main" element= {<FileUploadDashboard/>} />
           <Route path="/main/myfiles" element={<MyFilesPage/>} />
+          <Route path="/main/settings" element={<SettingsPage/>} />
         </Routes>
       </Router>
       </AuthProvider>

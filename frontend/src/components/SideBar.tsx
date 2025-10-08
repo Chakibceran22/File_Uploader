@@ -46,7 +46,7 @@ export const SideBar = ({
 
       {/* Sidebar */}
       <aside
-        className={`fixed lg:static inset-y-0 left-0 z-50 w-64 border-r flex flex-col transition-transform duration-300 ${
+        className={`fixed lg:sticky lg:top-0 lg:h-screen inset-y-0 left-0 z-50 w-64 border-r flex flex-col transition-transform duration-300 ${
           isDarkMode
             ? "bg-neutral-900 border-neutral-800"
             : "bg-white border-gray-200"
@@ -136,7 +136,7 @@ export const SideBar = ({
               My Files
             </button>
 
-            <button
+            {/* <button
               onClick={() => {
                 setActiveTab("recent");
                 setSidebarOpen(false);
@@ -153,12 +153,13 @@ export const SideBar = ({
             >
               <Clock className="w-4 h-4" />
               Recent
-            </button>
+            </button> */}
 
             <button
               onClick={() => {
                 setActiveTab("settings");
                 setSidebarOpen(false);
+                navigate('/main/settings')
               }}
               className={`w-full flex items-center gap-3 px-3 py-2 rounded-md text-sm font-medium transition-colors ${
                 activeTab === "settings"
