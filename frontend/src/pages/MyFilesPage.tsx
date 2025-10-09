@@ -1,23 +1,49 @@
-import React, { useState } from 'react';
-import { Upload, File, Folder, Settings, LogOut, Moon, Sun, X, Menu, Home, Clock, Download, Trash2, Share2, MoreVertical, FileText, FileImage, Video, Music, Archive, ChevronRight } from 'lucide-react';
+import React, { useState,useEffect } from 'react';
+import { Upload, File, Folder, Settings, LogOut, Moon, Sun, X, Menu, Home, Clock, Download, Trash2, Share2, MoreVertical, FileText, FileImage, Video, Music, Archive, ChevronRight, FileAudio } from 'lucide-react';
 import toast, { Toaster } from 'react-hot-toast';
 import useTheme from '../hooks/useTheme';
 import AuthToaster from '../components/AuthToaster';
 import { SideBar } from '../components/SideBar';
 import { MobileMainHeader } from '../components/MobileMainHeader';
-import { DesktopMainHeader } from '../components/DesktopMainHeader';
 import { useAuth } from '../hooks/useAuth';
 
-interface FileItem {
+// interface FileItem {
+//   id: string;
+//   name: string;
+//   type: 'folder' | 'file';
+//   size?: string;
+//   fileType?: string;
+//   date: string;
+//   parentId: string | null;
+//   icon?: any;
+// }
+type FolderItem = {
   id: string;
   name: string;
-  type: 'folder' | 'file';
-  size?: string;
-  fileType?: string;
-  date: string;
+  type: 'folder';
+  userId?: string;
   parentId: string | null;
-  icon?: any;
-}
+  date:string;
+  createdAt?: Date;
+  updatedAt?: Date;
+};
+
+type FileItem = {
+  id: string;
+  name: string;
+  type: 'file';
+  userId?: string;
+  parentId: string | null;
+  filePath?: string;       // required
+  fileType: string;       // e.g. 'pdf', 'jpg'
+  size: string;      
+  date: string     // in bytes
+  createdAt?: Date;
+  updatedAt?: Date;
+};
+
+type FileOrFolder = FileItem | FolderItem;
+
 
 const MyFilesPage: React.FC = () => {
   const { isDarkMode, toggleTheme } = useTheme();
@@ -32,38 +58,38 @@ const MyFilesPage: React.FC = () => {
   const [showRenameModal, setShowRenameModal] = useState(false);
   const [renameItemId, setRenameItemId] = useState<string | null>(null);
   const [renameValue, setRenameValue] = useState('');
-
+  
   // Mock data structure - simulating database
-  const [allItems, setAllItems] = useState<FileItem[]>([
+  const [allItems, setAllItems] = useState<FileOrFolder[]>([
     // Root level
     { id: '1', name: 'Documents', type: 'folder', date: '2 days ago', parentId: null },
     { id: '2', name: 'Photos', type: 'folder', date: '1 week ago', parentId: null },
     { id: '3', name: 'Projects', type: 'folder', date: '3 days ago', parentId: null },
-    { id: '4', name: 'Resume.pdf', type: 'file', size: '1.2 MB', fileType: 'pdf', date: '1 day ago', parentId: null, icon: FileText },
+    { id: '4', name: 'Resume.pdf', type: 'file', size: '1.2 MB', fileType: 'pdf', date: '1 day ago', parentId: null },
     
     // Inside Documents folder
     { id: '5', name: 'Work', type: 'folder', date: '2 days ago', parentId: '1' },
     { id: '6', name: 'Personal', type: 'folder', date: '1 week ago', parentId: '1' },
-    { id: '7', name: 'Contract.pdf', type: 'file', size: '2.4 MB', fileType: 'pdf', date: '2 hours ago', parentId: '1', icon: FileText },
+    { id: '7', name: 'Contract.pdf', type: 'file', size: '2.4 MB', fileType: 'pdf', date: '2 hours ago', parentId: '1' },
     
     // Inside Work folder
     { id: '8', name: 'Reports', type: 'folder', date: '1 day ago', parentId: '5' },
-    { id: '9', name: 'Meeting Notes.docx', type: 'file', size: '856 KB', fileType: 'document', date: '3 hours ago', parentId: '5', icon: FileText },
-    { id: '10', name: 'Budget.xlsx', type: 'file', size: '1.8 MB', fileType: 'document', date: '1 day ago', parentId: '5', icon: FileText },
+    { id: '9', name: 'Meeting Notes.docx', type: 'file', size: '856 KB', fileType: 'document', date: '3 hours ago', parentId: '5' },
+    { id: '10', name: 'Budget.xlsx', type: 'file', size: '1.8 MB', fileType: 'document', date: '1 day ago', parentId: '5' },
     
     // Inside Photos folder
     { id: '11', name: 'Vacation 2024', type: 'folder', date: '2 weeks ago', parentId: '2' },
-    { id: '12', name: 'Profile.jpg', type: 'file', size: '3.2 MB', fileType: 'image', date: '3 days ago', parentId: '2', icon: FileImage },
+    { id: '12', name: 'Profile.jpg', type: 'file', size: '3.2 MB', fileType: 'image', date: '3 days ago', parentId: '2' },
     
     // Inside Vacation folder
-    { id: '14', name: 'Beach.jpg', type: 'file', size: '4.1 MB', fileType: 'image', date: '2 weeks ago', parentId: '11', icon: FileImage },
-    { id: '15', name: 'Mountains.jpg', type: 'file', size: '3.8 MB', fileType: 'image', date: '2 weeks ago', parentId: '11', icon: FileImage },
-    { id: '16', name: 'Video.mp4', type: 'file', size: '125 MB', fileType: 'video', date: '2 weeks ago', parentId: '11', icon: Video },
+    { id: '14', name: 'Beach.jpg', type: 'file', size: '4.1 MB', fileType: 'image', date: '2 weeks ago', parentId: '11' },
+    { id: '15', name: 'Mountains.jpg', type: 'file', size: '3.8 MB', fileType: 'image', date: '2 weeks ago', parentId: '11' },
+    { id: '16', name: 'Video.mp4', type: 'file', size: '125 MB', fileType: 'video', date: '2 weeks ago', parentId: '11' },
     
     // Inside Projects folder
     { id: '17', name: 'Website Redesign', type: 'folder', date: '5 days ago', parentId: '3' },
     { id: '18', name: 'Mobile App', type: 'folder', date: '1 week ago', parentId: '3' },
-    { id: '19', name: 'Presentation.pptx', type: 'file', size: '5.2 MB', fileType: 'document', date: '3 days ago', parentId: '3', icon: FileText },
+    { id: '19', name: 'Presentation.pptx', type: 'file', size: '5.2 MB', fileType: 'document', date: '3 days ago', parentId: '3' },
   ]);
 
   const [currentFolderId, setCurrentFolderId] = useState<string | null>(null);
@@ -72,7 +98,7 @@ const MyFilesPage: React.FC = () => {
   ]);
 
   // Close dropdown when clicking outside
-  React.useEffect(() => {
+  useEffect(() => {
     const handleClickOutside = () => setOpenMenuId(null);
     if (openMenuId) {
       document.addEventListener('click', handleClickOutside);
@@ -85,8 +111,20 @@ const MyFilesPage: React.FC = () => {
       toast.error('Please enter a folder name');
       return;
     }
+    
+    const trimedFoldername = newFolderName.trim()
+    const isFolderExists = folders.some((folder) => {
+      return folder.name === trimedFoldername && folder.parentId === currentFolderId
+    })
+    
 
-    const newFolder: FileItem = {
+    if(isFolderExists) {
+      console.log(' i didnt get shit idk why ')
+      toast.error('Folder Does Exists Cant create one')
+      return
+    }
+
+    const newFolder: FolderItem = {
       id: Date.now().toString(),
       name: newFolderName,
       type: 'folder',
@@ -99,33 +137,47 @@ const MyFilesPage: React.FC = () => {
     setShowNewFolderModal(false);
     toast.success('Folder created successfully');
   };
+  const getIcon = (fileType: string | undefined) => {
+    let icon = FileText
+    switch (fileType) {
+      case 'video':
+        icon = Video
+        break;
+      case 'audio':
+        icon = FileAudio
+        break;
+      case 'archive':
+        icon = Archive
+        break;
+    }
+    return icon
+    
+
+
+  }
 
   const handleUploadFiles = () => {
     if (!selectedFiles || selectedFiles.length === 0) {
       toast.error('Please select files to upload');
       return;
     }
+    
+    
 
     const newFiles: FileItem[] = Array.from(selectedFiles).map(file => {
       const extension = file.name.split('.').pop()?.toLowerCase() || '';
       let fileType = 'document';
-      let icon = FileText;
 
       if (['jpg', 'jpeg', 'png', 'gif', 'webp'].includes(extension)) {
         fileType = 'image';
-        icon = FileImage;
       } else if (['mp4', 'mov', 'avi', 'mkv'].includes(extension)) {
         fileType = 'video';
-        icon = Video;
       } else if (['mp3', 'wav', 'flac'].includes(extension)) {
         fileType = 'audio';
-        icon = Music;
       } else if (['zip', 'rar', '7z', 'tar'].includes(extension)) {
         fileType = 'archive';
-        icon = Archive;
       } else if (['pdf'].includes(extension)) {
         fileType = 'pdf';
-        icon = FileText;
       }
 
       return {
@@ -136,7 +188,6 @@ const MyFilesPage: React.FC = () => {
         fileType,
         date: 'Just now',
         parentId: currentFolderId,
-        icon,
       };
     });
 
@@ -183,7 +234,7 @@ const MyFilesPage: React.FC = () => {
   const folders = currentItems.filter(item => item.type === 'folder');
   const files = currentItems.filter(item => item.type === 'file');
 
-  const handleFolderClick = (folder: FileItem) => {
+  const handleFolderClick = (folder: FolderItem) => {
     setCurrentFolderId(folder.id);
     setPathHistory([...pathHistory, { id: folder.id, name: folder.name }]);
   };
@@ -398,7 +449,7 @@ const MyFilesPage: React.FC = () => {
 
             {/* Files */}
             {files.map(file => {
-              const IconComponent = file.icon;
+              const IconComponent = getIcon(file.fileType);
               return (
                 <div
                   key={file.id}
