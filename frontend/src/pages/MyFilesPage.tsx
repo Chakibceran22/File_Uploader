@@ -23,7 +23,6 @@ type FolderItem = {
   type: 'folder';
   userId?: string;
   parentId: string | null;
-  date:string;
   createdAt?: Date;
   updatedAt?: Date;
 };
@@ -37,7 +36,6 @@ type FileItem = {
   filePath?: string;       // required
   fileType: string;       // e.g. 'pdf', 'jpg'
   size: string;      
-  date: string     // in bytes
   createdAt?: Date;
   updatedAt?: Date;
 };
@@ -62,34 +60,34 @@ const MyFilesPage: React.FC = () => {
   // Mock data structure - simulating database
   const [allItems, setAllItems] = useState<FileOrFolder[]>([
     // Root level
-    { id: '1', name: 'Documents', type: 'folder', date: '2 days ago', parentId: null },
-    { id: '2', name: 'Photos', type: 'folder', date: '1 week ago', parentId: null },
-    { id: '3', name: 'Projects', type: 'folder', date: '3 days ago', parentId: null },
-    { id: '4', name: 'Resume.pdf', type: 'file', size: '1.2 MB', fileType: 'pdf', date: '1 day ago', parentId: null },
+    { id: '1', name: 'Documents', type: 'folder', parentId: null, createdAt: new Date() },
+    { id: '2', name: 'Photos', type: 'folder',  parentId: null },
+    { id: '3', name: 'Projects', type: 'folder',  parentId: null },
+    { id: '4', name: 'Resume.pdf', type: 'file', size: '1.2 MB', fileType: 'pdf', parentId: null },
     
     // Inside Documents folder
-    { id: '5', name: 'Work', type: 'folder', date: '2 days ago', parentId: '1' },
-    { id: '6', name: 'Personal', type: 'folder', date: '1 week ago', parentId: '1' },
-    { id: '7', name: 'Contract.pdf', type: 'file', size: '2.4 MB', fileType: 'pdf', date: '2 hours ago', parentId: '1' },
+    { id: '5', name: 'Work', type: 'folder',  parentId: '1' },
+    { id: '6', name: 'Personal', type: 'folder',  parentId: '1' },
+    { id: '7', name: 'Contract.pdf', type: 'file', size: '2.4 MB', fileType: 'pdf',  parentId: '1' },
     
     // Inside Work folder
-    { id: '8', name: 'Reports', type: 'folder', date: '1 day ago', parentId: '5' },
-    { id: '9', name: 'Meeting Notes.docx', type: 'file', size: '856 KB', fileType: 'document', date: '3 hours ago', parentId: '5' },
-    { id: '10', name: 'Budget.xlsx', type: 'file', size: '1.8 MB', fileType: 'document', date: '1 day ago', parentId: '5' },
+    { id: '8', name: 'Reports', type: 'folder', parentId: '5' },
+    { id: '9', name: 'Meeting Notes.docx', type: 'file', size: '856 KB', fileType: 'document',  parentId: '5' },
+    { id: '10', name: 'Budget.xlsx', type: 'file', size: '1.8 MB', fileType: 'document', parentId: '5' },
     
     // Inside Photos folder
-    { id: '11', name: 'Vacation 2024', type: 'folder', date: '2 weeks ago', parentId: '2' },
-    { id: '12', name: 'Profile.jpg', type: 'file', size: '3.2 MB', fileType: 'image', date: '3 days ago', parentId: '2' },
+    { id: '11', name: 'Vacation 2024', type: 'folder',  parentId: '2' },
+    { id: '12', name: 'Profile.jpg', type: 'file', size: '3.2 MB', fileType: 'image',  parentId: '2' },
     
     // Inside Vacation folder
-    { id: '14', name: 'Beach.jpg', type: 'file', size: '4.1 MB', fileType: 'image', date: '2 weeks ago', parentId: '11' },
-    { id: '15', name: 'Mountains.jpg', type: 'file', size: '3.8 MB', fileType: 'image', date: '2 weeks ago', parentId: '11' },
-    { id: '16', name: 'Video.mp4', type: 'file', size: '125 MB', fileType: 'video', date: '2 weeks ago', parentId: '11' },
+    { id: '14', name: 'Beach.jpg', type: 'file', size: '4.1 MB', fileType: 'image',  parentId: '11' },
+    { id: '15', name: 'Mountains.jpg', type: 'file', size: '3.8 MB', fileType: 'image',  parentId: '11' },
+    { id: '16', name: 'Video.mp4', type: 'file', size: '125 MB', fileType: 'video',  parentId: '11' },
     
     // Inside Projects folder
-    { id: '17', name: 'Website Redesign', type: 'folder', date: '5 days ago', parentId: '3' },
-    { id: '18', name: 'Mobile App', type: 'folder', date: '1 week ago', parentId: '3' },
-    { id: '19', name: 'Presentation.pptx', type: 'file', size: '5.2 MB', fileType: 'document', date: '3 days ago', parentId: '3' },
+    { id: '17', name: 'Website Redesign', type: 'folder',  parentId: '3' },
+    { id: '18', name: 'Mobile App', type: 'folder',  parentId: '3' },
+    { id: '19', name: 'Presentation.pptx', type: 'file', size: '5.2 MB', fileType: 'document',  parentId: '3' },
   ]);
 
   const [currentFolderId, setCurrentFolderId] = useState<string | null>(null);
@@ -128,7 +126,6 @@ const MyFilesPage: React.FC = () => {
       id: Date.now().toString(),
       name: newFolderName,
       type: 'folder',
-      date: 'Just now',
       parentId: currentFolderId,
     };
 
@@ -441,7 +438,7 @@ const MyFilesPage: React.FC = () => {
                   <p className={`text-xs ${
                     isDarkMode ? 'text-gray-400' : 'text-gray-500'
                   }`}>
-                    {folder.date}
+                    {folder.createdAt?.toString()}
                   </p>
                 </div>
               </div>
@@ -488,7 +485,7 @@ const MyFilesPage: React.FC = () => {
                       <span className={`text-xs ${
                         isDarkMode ? 'text-gray-400' : 'text-gray-500'
                       }`}>
-                        {file.date}
+                        {file.createdAt?.toString()}
                       </span>
                     </div>
                   </div>
