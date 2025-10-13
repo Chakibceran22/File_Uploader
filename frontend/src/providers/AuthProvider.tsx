@@ -7,6 +7,7 @@ import { AuthContext } from "../contexts/AuthContext";
 export function AuthProvider({ children }: ProviderProps) {
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(true);
+  const [token, setToken] = useState<string>('')
 
   useEffect(() => {
     async function verifyUser() {
@@ -27,6 +28,8 @@ export function AuthProvider({ children }: ProviderProps) {
           throw new Error("UnAutherized access");
         }
         setIsAuthenticated(true);
+        setToken(savedToken)
+
       } catch (error) {
         console.log(error);
       } finally {
@@ -59,7 +62,7 @@ export function AuthProvider({ children }: ProviderProps) {
   }
 
   return (
-    <AuthContext.Provider value={{ isAuthenticated, loading, login, googleLogin, logout }}>
+    <AuthContext.Provider value={{ isAuthenticated, loading, login, googleLogin, logout, token }}>
       {children}
     </AuthContext.Provider>
   );

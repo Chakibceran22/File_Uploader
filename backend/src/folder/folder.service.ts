@@ -5,7 +5,7 @@ import { PayloadDTO } from 'src/dto/token-payload-dto/token-payload.dto';
 import { SupabaseService } from 'src/supabase/supabase.service';
 
 @Injectable()
-export class FileService {
+export class FolderService {
     constructor(
         private readonly supabaseService: SupabaseService,
         private readonly jwtService: JwtService
@@ -15,11 +15,10 @@ export class FileService {
         const insertData = {
             name: createFolderDto.name,
             user_id: user.sub,
-            type: createFolderDto.type,
             parent_id: createFolderDto.parentId,
         }
         const {data, error} = await this.supabaseService.client
-        .from('items')
+        .from('folders')
         .insert(insertData)
         .select()
         if(error){

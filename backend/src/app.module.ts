@@ -4,7 +4,7 @@ import { AppService } from './app.service';
 import { SupabaseModule } from './supabase/supabase.module';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { AuthModule } from './auth/auth.module';
-import { FileModule } from './file/file.module';
+import { FolderModule } from './folder/folder.module';
 import { JwtModule } from '@nestjs/jwt';
 @Module({
   imports: [
@@ -13,7 +13,7 @@ import { JwtModule } from '@nestjs/jwt';
       isGlobal: true,
     }),
     AuthModule,
-    FileModule,
+    FolderModule,
     JwtModule.registerAsync({
       global:true,
       inject: [ConfigService],

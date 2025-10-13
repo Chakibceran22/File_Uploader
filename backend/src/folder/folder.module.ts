@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
-import { FileController } from './file.controller';
-import { FileService } from './file.service';
+import { FolderController } from './folder.controller';
+import { FolderService } from './folder.service';
 import { SupabaseModule } from 'src/supabase/supabase.module';
 import { JwtModule } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
@@ -8,7 +8,7 @@ import { ConfigService } from '@nestjs/config';
   imports:[SupabaseModule,
    
   ],
-  controllers: [FileController],
-  providers: [FileService]
+  controllers: [FolderController],
+  providers: [FolderService]
 })
-export class FileModule {}
+export class FolderModule {}

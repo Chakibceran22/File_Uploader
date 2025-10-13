@@ -10,9 +10,13 @@ import { AuthProvider } from "./providers/AuthProvider";
 import FileUploadDashboard from "./pages/FileUploadDahsboardPage";
 import MyFilesPage from "./pages/MyFilesPage";
 import SettingsPage from "./pages/SettingsPage";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 function App() {
+  const queryClient = new QueryClient()
   return (
-    <ThemeProvider>
+    <QueryClientProvider client={queryClient}>
+      <ThemeProvider>
       <AuthProvider>
         <Router>
         <Routes>
@@ -29,6 +33,8 @@ function App() {
       </Router>
       </AuthProvider>
     </ThemeProvider>
+    <ReactQueryDevtools position="bottom" />
+    </QueryClientProvider>
   );
 }
 

@@ -6,6 +6,7 @@ import AuthToaster from '../components/AuthToaster';
 import { SideBar } from '../components/SideBar';
 import { MobileMainHeader } from '../components/MobileMainHeader';
 import { useAuth } from '../hooks/useAuth';
+import { fileService } from '../utils/fileServiceSinglton';
 
 // interface FileItem {
 //   id: string;
@@ -17,6 +18,7 @@ import { useAuth } from '../hooks/useAuth';
 //   parentId: string | null;
 //   icon?: any;
 // }
+import type {CreateFolderDTO} from '../types/CreateFileDTO'
 type FolderItem = {
   id: string;
   name: string;
@@ -47,7 +49,7 @@ const MyFilesPage: React.FC = () => {
   const { isDarkMode, toggleTheme } = useTheme();
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [activeTab, setActiveTab] = useState('files');
-  const { logout } = useAuth();
+  const { logout,token } = useAuth();
   const [showNewFolderModal, setShowNewFolderModal] = useState(false);
   const [showUploadModal, setShowUploadModal] = useState(false);
   const [newFolderName, setNewFolderName] = useState('');
@@ -104,7 +106,7 @@ const MyFilesPage: React.FC = () => {
     }
   }, [openMenuId]);
 
-  const handleCreateFolder = () => {
+  const handleCreateFolder = async() => {
     if (!newFolderName.trim()) {
       toast.error('Please enter a folder name');
       return;
@@ -117,7 +119,6 @@ const MyFilesPage: React.FC = () => {
     
 
     if(isFolderExists) {
-      console.log(' i didnt get shit idk why ')
       toast.error('Folder Does Exists Cant create one')
       return
     }
@@ -132,6 +133,18 @@ const MyFilesPage: React.FC = () => {
     setAllItems([...allItems, newFolder]);
     setNewFolderName('');
     setShowNewFolderModal(false);
+    try {
+      const createFileDTO: CreateFolderDTO = {
+        name: newFolder.name,
+        parentId: newFolder.parentId
+      }
+    
+      
+      const response = await fileService.createFolder(createFileDTO,token )
+      console.log(response)
+    } catch (error:any) {
+      toast.error(error.message)
+    }
     toast.success('Folder created successfully');
   };
   const getIcon = (fileType: string | undefined) => {
