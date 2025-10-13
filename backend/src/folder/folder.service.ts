@@ -21,6 +21,7 @@ export class FolderService {
         .from('folders')
         .insert(insertData)
         .select()
+        .single()
         if(error){
             throw new UnauthorizedException(error.message)
         }

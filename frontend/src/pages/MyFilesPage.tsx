@@ -123,8 +123,18 @@ const MyFilesPage: React.FC = () => {
       return
     }
 
-    const newFolder: FolderItem = {
-      id: Date.now().toString(),
+    
+    try {
+      const createFileDTO: CreateFolderDTO = {
+        name: newFolderName,
+        parentId: currentFolderId
+      }
+    
+      
+      const response = await fileService.createFolder(createFileDTO,token )
+      if(!response) throw new Error("Response failed")
+      const newFolder: FolderItem = {
+      id: response.id,
       name: newFolderName,
       type: 'folder',
       parentId: currentFolderId,
@@ -133,15 +143,6 @@ const MyFilesPage: React.FC = () => {
     setAllItems([...allItems, newFolder]);
     setNewFolderName('');
     setShowNewFolderModal(false);
-    try {
-      const createFileDTO: CreateFolderDTO = {
-        name: newFolder.name,
-        parentId: newFolder.parentId
-      }
-    
-      
-      const response = await fileService.createFolder(createFileDTO,token )
-      console.log(response)
     } catch (error:any) {
       toast.error(error.message)
     }
