@@ -5,15 +5,7 @@ import { SupabaseModule } from 'src/supabase/supabase.module';
 import { JwtModule, JwtService } from '@nestjs/jwt';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 @Module({
-    imports: [SupabaseModule,
-       JwtModule.registerAsync({
-      inject: [ConfigService],
-      useFactory: async (configService: ConfigService) => ({
-        secret: configService.get<string>('JWT_SECRET'),
-        signOptions: { expiresIn: '7d' },
-      }),
-    }),
-    ],
+    imports: [SupabaseModule],
   controllers: [AuthController],
   providers: [AuthService]
 })

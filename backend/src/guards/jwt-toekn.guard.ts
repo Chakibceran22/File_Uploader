@@ -1,5 +1,6 @@
 import { Injectable, CanActivate, ExecutionContext, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
+import { PayloadDTO } from 'src/dto/token-payload-dto/token-payload.dto';
 
 @Injectable()
 export class JwtAuthGuard implements CanActivate {
@@ -17,7 +18,7 @@ export class JwtAuthGuard implements CanActivate {
 
     try {
       // Verify YOUR JWT with YOUR secret
-      const payload = this.jwtService.verify(token);
+      const payload: PayloadDTO = this.jwtService.verify(token);
       
       // Attach user to request so you can use it in your endpoint
       request.user = payload;

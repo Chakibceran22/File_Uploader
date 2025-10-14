@@ -5,5 +5,6 @@ export type AuthContextType = {
     loading: boolean;
     login: (creadentials: LoginDTO) => void
     googleLogin: () => Promise<{url: any} | undefined>
-    logout: () => void
+    logout: () => void,
+    token :string
 }
